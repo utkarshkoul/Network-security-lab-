@@ -1,4 +1,4 @@
-def vigenere_encrypt(text, key):
+def vigenere_encrypt(text, key, decrypt=False):
     result = ""
     key = key.upper()
     key_index = 0
@@ -6,6 +6,10 @@ def vigenere_encrypt(text, key):
     for char in text:
         if char.isalpha():
             shift = ord(key[key_index % len(key)]) - ord('A')
+
+            if decrypt:
+                shift = -shift
+
             encrypted = chr((ord(char.upper()) - ord('A') + shift) % 26 + ord('A'))
             result += encrypted
             key_index += 1
@@ -15,9 +19,12 @@ def vigenere_encrypt(text, key):
     return result
 
 
-plaintext = input("Enter plaintext: ")
-key = input("Enter key: ")
+plaintext = "HELLO"
+key = "KEY"
 
-ciphertext = vigenere_encrypt(plaintext, key)
+encrypted = vigenere_encrypt(plaintext, key)
 
-print("Ciphertext:", ciphertext)
+print(f"Original: {plaintext}")
+print(f"Encrypted: {encrypted}")
+
+print(f"Decrypted: {vigenere_encrypt(encrypted, key, True)}")
