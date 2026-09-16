@@ -1,0 +1,41 @@
+import hmac
+import hashlib
+import secrets
+import time
+
+secret = b"network123"
+used_nonces = set()
+
+# Server creates a challenge
+nonce = secrets.token_hex(8)
+timestamp = int(time.time())
+
+print("Nonce:", nonce)
+print("Timestamp:", timestamp)
+
+# Client creates message
+message = f"user:{nonce}:{timestamp}".encode()
+
+# Client creates HMAC response
+response = hmac.new(
+    secret,
+    message,
+    hashlib.sha256
+).hexdigest()
+
+print("HMAC Response:", response)
+
+# Server verifies the response
+expected = hmac.new(
+    secret,
+    message,
+    hashlib.sha256
+).hexdigest()
+
+if nonce in used_nonces:
+    print("Replay Attack Detected!")
+elif hmac.compare_digest(response, expected):
+    used_nonces.add(nonce)
+    print("Authentication Successful")
+else:
+    print("Authentication Failed")
